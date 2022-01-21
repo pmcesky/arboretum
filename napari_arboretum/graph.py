@@ -33,6 +33,8 @@ class TreeNode:
 
 def build_reverse_graph(graph: dict) -> list:
     """Take the data from a Tracks layer graph and reverse it.
+       That is, the graph in Napari tracking layer is a dict, where each item is 
+       child: [parents]. Here the function reverse this graph, to write it to parents: [children]. 
 
     Parameters
     ----------
@@ -75,6 +77,7 @@ def linearise_tree(graph: dict, root: int) -> list:
     ----------
     graph : dict
         A dictionary encoding the graph, taken from the napari.Tracks layer.
+        Here the graph should be a reversed graph, a dict, where each item is parent: [children].
     root : int
         The root node to begin the search from.
 
@@ -135,7 +138,7 @@ def build_subgraph(layer, node):
         node = TreeNode()
         node.ID = _id
 
-        idx = np.where(layer.data[:, 0] == _id)[0]
+        idx = np.where(layer.data[:, 0] == _id)[0] # the first index that conforms this condition
         node.t = (np.min(layer.data[idx, 1]), np.max(layer.data[idx, 1]))
         if _id in reverse_graph:
             node.children = reverse_graph[_id]
@@ -149,7 +152,7 @@ def build_subgraph(layer, node):
 
     queue = [nodes[0]]
 
-    # breadth first search
+    # breadth first search, search all the elements that connected with this root
     while queue:
         node = queue.pop(0)
         for child in node.children:

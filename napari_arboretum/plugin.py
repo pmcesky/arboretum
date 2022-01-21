@@ -69,7 +69,7 @@ class Arboretum(QWidget):
             layer
             for layer in self._viewer.layers
             if isinstance(layer, napari.layers.Tracks)
-        ]
+        ] # current track layers in napari
 
         for layer in layers:
             if layer not in self._tracks_layers:
@@ -96,7 +96,7 @@ class Arboretum(QWidget):
                 return
 
             edges, annotations = layout_subgraph(root, subgraph_nodes)
-            self.draw_graph(track_id, edges, annotations)
+            self.draw_graph(track_id, edges, annotations)  
 
     def draw_graph(self, track_id, edges, annotations):
         """Plot graph on the plugin canvas."""
