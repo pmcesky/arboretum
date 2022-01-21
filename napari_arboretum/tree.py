@@ -44,15 +44,15 @@ def _build_tree(nodes):
     while queue:
 
         # pop the root from the tree
-        node = queue.pop(0)
-        y = y_pos.pop(0)
+        node = queue.pop(0) # current node
+        y = y_pos.pop(0)  # current y position
 
         # TODO(arl): sync this with layer coloring
         depth = float(node.generation) / max_generational_depth
         edge_color = turbo.map(depth)[0] * 255
 
         # draw the root of the tree
-        edges.append(([y, y], [node.t[0], node.t[-1]], edge_color))
+        edges.append(([y, y], [node.t[0], node.t[-1]], edge_color)) # start and end coordinates of the edge
 
         # mark if this is an apoptotic tree
         if node.is_leaf:
@@ -61,8 +61,10 @@ def _build_tree(nodes):
         if node.is_root:
             annotations.append((y, node.t[0], str(node.ID), WHITE))
 
+        # children nodes of the current node
         children = [t for t in nodes if t.ID in node.children]
 
+        # check child node of current node as in BFS
         for child in children:
             if child not in marked:
 
@@ -73,9 +75,11 @@ def _build_tree(nodes):
                 # calculate the depth modifier
                 depth_mod = 2.0 / (2.0 ** (node.generation))
 
+                # first child put right
                 if child == children[0]:
                     y_pos.append(y + depth_mod)
                 else:
+                    # second child put left
                     y_pos.append(y - depth_mod)
 
                 # plot a linking line to the children
@@ -92,8 +96,8 @@ def _build_tree(nodes):
     # now that we have traversed the tree, calculate the span
     tree_span = []
     for edge in edges:
-        tree_span.append(edge[0][0])
-        tree_span.append(edge[0][1])
+        tree_span.append(edge[0][0]) # y
+        tree_span.append(edge[0][1]) # y_pos[-1]
 
     # # work out the span of the tree, we can modify positioning here
     # min_x = min(tree_span)

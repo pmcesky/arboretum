@@ -101,6 +101,7 @@ class Arboretum(QWidget):
     def draw_graph(self, track_id, edges, annotations):
         """Plot graph on the plugin canvas."""
 
+        # use pyqt-graph to plot
         self.plot_view.clear()
         self.plot_view.setTitle(f"Lineage tree: {track_id}")
 
@@ -109,14 +110,15 @@ class Arboretum(QWidget):
         self.plot_view.disableAutoRange()
 
         for ex, ey, ec in edges:
+            # edge start and end x and y coordinates
             self.plot_view.plot(ex, ey, pen=pg.mkPen(color=ec, width=3))
 
         # labels
         for tx, ty, tstr, tcol in annotations:
 
-            # change the alpha value according to whether this is the selected
-            # cell or another part of the tree
-            tcol[3] = 255 if tstr == str(track_id) else 64
+            # change the alpha value of the edge color according to 
+            # whether this is the selected cell or another part of the tree
+            tcol[3] = 255 if tstr == str(track_id) else 64  # alpha value of the edge color
 
             pt = pg.TextItem(
                 text=tstr,
@@ -132,3 +134,26 @@ class Arboretum(QWidget):
             self.plot_view.addItem(pt, ignoreBounds=True)
 
         self.plot_view.autoRange()
+
+
+# One question, how are the edges layout in a neat way, that is nto messed up with each other?
+# 1. the edge start and end coordinates and the generation adjust in the '_build_tree' function
+#   If it is this one, then we could just use this pattern to plot lineage tree, like with matplotlib
+# 2. the layout of the QTWidget?:
+    # layout = QVBoxLayout()
+    #     plot_widget = pg.GraphicsLayoutWidget()
+    #     self.plot_view = plot_widget.addPlot(
+    #         title="Lineage tree", labels={"left": "Time"}
+    #     )
+    #     self.plot_view.hideAxis("bottom")
+    #     layout.addWidget(plot_widget)
+    #     layout.setAlignment(Qt.AlignTop)
+    #     layout.setSpacing(4)
+    #     self.setMaximumWidth(GUI_MAXIMUM_WIDTH)
+    #     self.setLayout(layout)
+# 3. the pyqt-graph 'self.plot_view.autoRange()' at the end?
+
+
+# About the interactive selection:
+# seems the plugin above is all about plot, and it does not involve any interaction between the user
+# we can add this interaction with matplotlib
